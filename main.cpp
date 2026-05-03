@@ -1,7 +1,9 @@
 #include <iostream>
 #include "PasswordEntry.h"
 int main(){
-	PasswordEntry e1("Gmail" , "20-07-2008" , "0987yhn");
+	PasswordEntry e1("Gmail" , "*&$-ha" , "0987yhn");
+	e1.display();
+	
 	
 	return 0;
 }
