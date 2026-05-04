@@ -1,5 +1,5 @@
 # Password Security Suite
-**OOP Final Semester Project | 2nd Semester Computer Science**
+**OOP Final Semester Project | 2nd Semester Computer Science & Information Technology**
 
 A modular C++ console application designed to evaluate, generate, and store passwords using real-world cybersecurity standards and Object-Oriented principles.
 
