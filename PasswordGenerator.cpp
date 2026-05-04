@@ -114,13 +114,15 @@ string PhraseGenerator::generate() {
     srand((unsigned int)time(0));
 
     string words[] = {
-        "Blue", "Tiger", "Storm", "Cloud", "River",
-        "Eagle", "Stone", "Flame", "Swift", "Night",
-        "Brave", "Solar", "Frost", "Cedar", "Maple",
-        "Ocean", "Pixel", "Lunar", "Amber", "Steel",
-        "Crisp", "Vivid", "Blaze", "Delta", "Flint"
+    "Blue", "Tiger", "Storm", "Cloud", "River", "Eagle", "Stone", "Flame", 
+    "Swift", "Night", "Brave", "Solar", "Frost", "Cedar", "Maple", "Ocean", 
+    "Pixel", "Lunar", "Amber", "Steel", "Crisp", "Vivid", "Blaze", "Delta", 
+    "Flint", "Shadow", "Glacier", "Summit", "Zenith", "Orbit", "Pulse", "Canyon",
+    "Prism", "Echo", "Falcon", "Gully", "Harbor", "Jungle", "Kite", "Legend",
+    "Mist", "Nomad", "Onyx", "Panda", "Quartz", "Radar", "Siren", "Tulip",
+    "Under", "Vortex", "Willow", "Xenon", "Yacht", "Zebra", "Alpha", "Beta"
     };
-    int wordListSize = 25;
+    int wordListSize = 56;
 
     string passphrase = "";
 
