@@ -39,30 +39,30 @@ RandomGenerator::RandomGenerator(int len, bool upper, bool digits,
 
 // Build the pool of allowed characters based on user settings
 string RandomGenerator::buildCharPool() {
-    string pool = "abcdefghijkmnopqrstuvwxyz"; // lowercase (m removed — looks like rn)
+    // Start with lowercase — 'l' removed upfront (looks like 1)
+    string pool = "abcdefghijkmnopqrstuvwxyz";
 
     if (avoidLookAlikes) {
-        // Remove confusing lowercase: l
-        pool = "abcdefghijkmnopqrstuvwxyz";
-        // already removed l above; also remove o for 0/o confusion
+        // Additionally remove 'o' (looks like 0)
         string cleaned = "";
         for (char c : pool) {
-            if (c != 'l' && c != 'o') cleaned += c;
+            if (c != 'o') cleaned += c;
         }
         pool = cleaned;
     }
 
     if (useUppercase) {
-        string upper = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // removed I (looks like 1)
-        if (!avoidLookAlikes) {
-            upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (avoidLookAlikes) {
+            // Remove I (looks like 1) and O (looks like 0)
+            pool += "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        } else {
+            pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         }
-        pool += upper;
     }
 
     if (useDigits) {
-        string digits = avoidLookAlikes ? "23456789" : "0123456789";
-        pool += digits;
+        // Remove 0 and 1 if avoiding look-alikes
+        pool += avoidLookAlikes ? "23456789" : "0123456789";
     }
 
     if (useSymbols) {
@@ -75,7 +75,6 @@ string RandomGenerator::buildCharPool() {
 string RandomGenerator::generate() {
     string pool = buildCharPool();
 
-    // Safety check — pool should never be empty but let's be safe
     if (pool.empty()) {
         throw runtime_error("Character pool is empty. Enable at least one character type.");
     }
@@ -114,7 +113,6 @@ void PhraseGenerator::setSeparator(char sep) {
 string PhraseGenerator::generate() {
     srand((unsigned int)time(0));
 
-    // A small built-in word list — simple and clear
     string words[] = {
         "Blue", "Tiger", "Storm", "Cloud", "River",
         "Eagle", "Stone", "Flame", "Swift", "Night",
@@ -130,14 +128,13 @@ string PhraseGenerator::generate() {
         int index = rand() % wordListSize;
         passphrase += words[index];
 
-        // Add separator between words, not after the last word
         if (i < wordCount - 1) {
             passphrase += separator;
         }
     }
 
     // Always append 2 random digits at the end for extra strength
-    int num = 10 + rand() % 90; // gives a 2-digit number 10–99
+    int num = 10 + rand() % 90;
     passphrase += to_string(num);
 
     return passphrase;
@@ -145,35 +142,38 @@ string PhraseGenerator::generate() {
 
 
 // ─────────────────────────────────────────────
-//  FREE FUNCTION — asks user questions and
-//  returns the generated password
-//  (called from main or menu)
+//  HELPER — read a valid yes/no answer
+//
+//  FIX: cin >> input leaves '\n' in the buffer.
+//  We now call cin.ignore() after every cin >>
+//  so the buffer is always clean for the next read.
 // ─────────────────────────────────────────────
-
-// Helper to read a valid yes/no answer
 bool askYesNo(const string& question) {
     string input;
     while (true) {
         cout << question << " (y/n): ";
         cin >> input;
+        cin.ignore(1000, '\n');   // ← FIX: flush leftover newline
 
         if (input == "y" || input == "Y" || input == "yes" || input == "YES") return true;
         if (input == "n" || input == "N" || input == "no"  || input == "NO")  return false;
 
         cout << "  Invalid input. Please enter y or n.\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
     }
 }
 
-// Helper to read an integer within a range
+// ─────────────────────────────────────────────
+//  HELPER — read an integer within a range
+//
+//  FIX: same cin.ignore() after every cin >>
+// ─────────────────────────────────────────────
 int askInt(const string& question, int minVal, int maxVal) {
     string input;
     while (true) {
         cout << question;
         cin >> input;
+        cin.ignore(1000, '\n');   // ← FIX: flush leftover newline
 
-        // Check all characters are digits
         bool valid = !input.empty();
         for (char c : input) {
             if (!isdigit(c)) { valid = false; break; }
@@ -186,18 +186,19 @@ int askInt(const string& question, int minVal, int maxVal) {
 
         cout << "  Invalid input. Please enter a number between "
              << minVal << " and " << maxVal << ".\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
     }
 }
 
-// The main generator flow — call this from your menu
+// ─────────────────────────────────────────────
+//  FREE FUNCTION — runPasswordGenerator
+//  Asks the user questions and returns the
+//  generated password string.
+// ─────────────────────────────────────────────
 string runPasswordGenerator() {
     cout << "\n========================================\n";
     cout << "         PASSWORD GENERATOR\n";
     cout << "========================================\n\n";
 
-    // ── Question 1: Mode ───────────────────────
     cout << "Do you need to remember this password, or will it be saved in the vault?\n";
     cout << "  [1] I need to remember it  (Phrase mode)\n";
     cout << "  [2] I will save it         (Random mode)\n";
@@ -213,11 +214,9 @@ string runPasswordGenerator() {
     if (modeChoice == 1) {
         PhraseGenerator pg;
 
-        // Word count
         int words = askInt("\nHow many words? (2 / 3 / 4): ", 2, 4);
         pg.setWordCount(words);
 
-        // Separator
         cout << "\nSeparator between words?\n";
         cout << "  [1] None   — BlueStorm49\n";
         cout << "  [2] Dash   — Blue-Storm-49\n";
@@ -241,7 +240,6 @@ string runPasswordGenerator() {
     //  RANDOM MODE
     // ═══════════════════════════════════
     else {
-        // Strength preset
         cout << "\nHow strong does it need to be?\n";
         cout << "  [1] Basic   (good for low-risk accounts)\n";
         cout << "  [2] Strong  (recommended for personal accounts)\n";
@@ -255,7 +253,6 @@ string runPasswordGenerator() {
         int  len     = 12;
 
         if (strength == 1) {
-            // Basic — ask everything manually
             len     = askInt("\nPassword length (8 to 64): ", 8, 64);
             upper   = askYesNo("Include uppercase letters? (A-Z)");
             digits  = askYesNo("Include numbers?           (0-9)");
@@ -263,19 +260,16 @@ string runPasswordGenerator() {
             avoid   = askYesNo("Avoid look-alike characters? (0/O, 1/l)");
 
         } else if (strength == 2) {
-            // Strong — set good defaults, let them adjust length
             len = askInt("\nPassword length (12 to 64, recommended 16): ", 12, 64);
-            // uppercase, digits, symbols all ON — no need to ask
+            // uppercase, digits, symbols stay ON — no extra questions needed
 
         } else {
-            // Maximum — everything enabled automatically
+            // Maximum — everything on automatically
             len = 20;
             cout << "\nMaximum mode selected. All character types enabled. Length set to 20.\n";
         }
 
-        // Validate that at least one character type is on
         if (!upper && !digits && !symbols) {
-            // lowercase is always on, but warn the user
             cout << "\nNote: Only lowercase letters will be used. This makes a weaker password.\n";
         }
 
@@ -294,6 +288,14 @@ string runPasswordGenerator() {
     cout << "  Generated Password:  " << generatedPassword << "\n";
     cout << "----------------------------------------\n";
     cout << "\nTip: You can now evaluate this password using Option 1 from the main menu.\n";
+
+    // FIX: cin buffer must be fully clean before returning to main.
+    // main.cpp does:  cin.ignore(1000, '\n')  for "Press Enter..."
+    // Since askInt/askYesNo already flushed the buffer above,
+    // getline here consumes the actual Enter press from the user
+    // so main's cin.ignore doesn't swallow it and skip the prompt.
+    cout << "\n  Press Enter to return to menu...";
+    cin.ignore(1000, '\n');
 
     return generatedPassword;
 }

@@ -106,8 +106,9 @@ int main() {
 
             case 2:
                 runPasswordGenerator();
-                cout << "\n  Press Enter to return to menu...";
-                cin.ignore(1000, '\n');
+                // "Press Enter" is handled inside runPasswordGenerator()
+                // so we do NOT call cin.ignore() again here — that would
+                // cause it to wait for a second Enter press.
                 break;
 
             case 3:
