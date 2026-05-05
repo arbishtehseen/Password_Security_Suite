@@ -5,7 +5,6 @@ using namespace std;
 
 // helperfunction --> convertTohash
 string AuthGuard::convertToHash(string masterpassword){
-	
 	string hash;
 	
 	if(masterpassword.size() >= 8 && masterpassword.size() <= 20){
@@ -59,14 +58,21 @@ void AuthGuard::resetfailCount(){
 	failCount = 0;
 }
 
+void AuthGuard::startLockTimer() {
+    lockTime = time(0); 
+}
 
-
-
-
-
-
-
-
+int AuthGuard::getRemainingTime() {
+    if (!isLocked) return 0;
+    double elapsed = difftime(time(0), lockTime);
+    int remaining = 30 - (int)elapsed;
+    if (remaining <= 0) {
+        isLocked = false;
+        failCount = 0;
+        return 0;
+    }
+    return remaining;
+}
 
 
 
