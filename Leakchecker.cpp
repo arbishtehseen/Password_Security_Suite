@@ -1,6 +1,6 @@
 #include "LeakChecker.h"
 #include <fstream>
-#include <iostream>  // <-- Yeh missing hoga
+#include <iostream>  
 using namespace std;
 
 LeakChecker::LeakChecker(){}
@@ -17,7 +17,6 @@ LeakChecker::LeakChecker(string filename) {
         }
         file.close();
     } else {
-        // Bina iostream ke yeh line error degi
         cout << "Warning: Leaks file (" << filename << ") not found!" << endl;
     }
 }

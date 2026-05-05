@@ -3,20 +3,18 @@
 #include <windows.h>
 
 using namespace std;
-
-// Partner A ke color logic ko reuse karne ke liye helper
 static void setDashColor(int colorCode) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, colorCode);
 }
 
-// XOR Decryption function (vahi logic jo vault mein encryption ke liye hai)
 string decryptForCheck(string p) {
-    for(int i = 0; i < p.size(); i++) p[i] ^= 9; // XOR with 9 to reverse
+    for(int i = 0; i < p.size(); i++) p[i] ^= 9;
     return p;
 }
 
-void HealthDashboard::analyzeVault(const vector<PasswordEntry>& entries, LeakChecker& lc, PasswordEvaluator& pe) {
+void HealthDashboard::analyzeVault(const vector<PasswordEntry>& entries, 
+LeakChecker& lc, PasswordEvaluator& pe) {
     totalEntries = entries.size();
     compromisedCount = 0;
     weakCount = 0;
@@ -24,25 +22,20 @@ void HealthDashboard::analyzeVault(const vector<PasswordEntry>& entries, LeakChe
     cout << "\n--- Initializing Vault Health Scan ---" << endl;
 
     for (const auto& entry : entries) {
-        // STEP 1: Decrypt encrypted password from vault
         string plainPass = decryptForCheck(entry.getEncryptedPassword()); 
 
-        // STEP 2: Partner B - Leak Check (Aapki class)
         bool leaked = lc.isLeaked(plainPass);
         
-        // STEP 3: Partner A - Strength Check (Evaluator class)
         try {
             pe.setPassword(plainPass);
             pe.evaluate();
-        } catch (...) { continue; } // Error handling for empty passwords
+        } catch (...) { continue; } 
 
         int score = pe.getScore();
 
-        // Stats update karein
         if (leaked) compromisedCount++;
         if (score < 50) weakCount++;
 
-        // Live status report
         cout << "Checking [" << entry.getLabel() << "]: ";
         if(leaked) {
             setDashColor(12); cout << "CRITICAL (LEAKED) "; 
@@ -77,9 +70,9 @@ void HealthDashboard::displaySummary() const {
         ((float)(totalEntries - compromisedCount) / totalEntries) * 100 : 0;
 
     cout << "OVERALL VAULT HEALTH   : ";
-    if (healthScore >= 80) setDashColor(10); // Green
-    else if (healthScore >= 50) setDashColor(14); // Yellow
-    else setDashColor(12); // Red
+    if (healthScore >= 80) setDashColor(10); 
+    else if (healthScore >= 50) setDashColor(14); 
+    else setDashColor(12);
 
     cout << (int)healthScore << "%" << endl;
     setDashColor(7);
