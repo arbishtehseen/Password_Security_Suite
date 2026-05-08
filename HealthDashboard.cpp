@@ -1,11 +1,17 @@
 #include "HealthDashboard.h"
 #include <iostream>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 using namespace std;
 static void setDashColor(int colorCode) {
+#ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, colorCode);
+#else
+    (void)colorCode;
+#endif
 }
 
 string decryptForCheck(string p) {

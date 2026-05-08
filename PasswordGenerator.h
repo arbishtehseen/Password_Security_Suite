@@ -83,4 +83,6 @@ public:
     string generate() override;
 };
 
+string runPasswordGenerator();
+
 #endif

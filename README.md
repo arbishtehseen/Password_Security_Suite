@@ -42,7 +42,7 @@ The project demonstrates mastery of core OOP concepts through a modular design:
 ---
 
 ## ⚙️ Execution
-1.  **Compile**: `g++ main.cpp -o PasswordSecuritySuite`
+1.  **Compile**: `g++ -std=c++17 main.cpp AuthGuard.cpp HealthDashboard.cpp Leakchecker.cpp PasswordEntry.cpp PasswordEvaluator.cpp PasswordGenerator.cpp PasswordVault.cpp -o PasswordSecuritySuite`
 2.  **Run**: `./PasswordSecuritySuite`
 
 > **Note**: This project utilizes local `.txt` files for the leak database and vault persistence. Ensure these files are present in the executable directory.
