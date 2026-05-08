@@ -4,6 +4,9 @@
 #include <string>
 using namespace std;
 
+// Forward declaration
+class PasswordVault;
+
 // ─────────────────────────────────────────────
 //  BASE CLASS  (Abstract)
 //  Every generator must have a generate() method

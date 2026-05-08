@@ -1,4 +1,5 @@
 #include "PasswordGenerator.h"
+#include "PasswordVault.h"
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
@@ -37,13 +38,10 @@ RandomGenerator::RandomGenerator(int len, bool upper, bool digits,
                                  bool symbols, bool avoidConfusing)
     : PasswordGenerator(len, upper, digits, symbols, avoidConfusing) {}
 
-// Build the pool of allowed characters based on user settings
 string RandomGenerator::buildCharPool() {
-    // Start with lowercase — 'l' removed upfront (looks like 1)
     string pool = "abcdefghijkmnopqrstuvwxyz";
 
     if (avoidLookAlikes) {
-        // Additionally remove 'o' (looks like 0)
         string cleaned = "";
         for (char c : pool) {
             if (c != 'o') cleaned += c;
@@ -53,7 +51,6 @@ string RandomGenerator::buildCharPool() {
 
     if (useUppercase) {
         if (avoidLookAlikes) {
-            // Remove I (looks like 1) and O (looks like 0)
             pool += "ABCDEFGHJKLMNPQRSTUVWXYZ";
         } else {
             pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -61,7 +58,6 @@ string RandomGenerator::buildCharPool() {
     }
 
     if (useDigits) {
-        // Remove 0 and 1 if avoiding look-alikes
         pool += avoidLookAlikes ? "23456789" : "0123456789";
     }
 
@@ -114,13 +110,13 @@ string PhraseGenerator::generate() {
     srand((unsigned int)time(0));
 
     string words[] = {
-    "Blue", "Tiger", "Storm", "Cloud", "River", "Eagle", "Stone", "Flame", 
-    "Swift", "Night", "Brave", "Solar", "Frost", "Cedar", "Maple", "Ocean", 
-    "Pixel", "Lunar", "Amber", "Steel", "Crisp", "Vivid", "Blaze", "Delta", 
-    "Flint", "Shadow", "Glacier", "Summit", "Zenith", "Orbit", "Pulse", "Canyon",
-    "Prism", "Echo", "Falcon", "Gully", "Harbor", "Jungle", "Kite", "Legend",
-    "Mist", "Nomad", "Onyx", "Panda", "Quartz", "Radar", "Siren", "Tulip",
-    "Under", "Vortex", "Willow", "Xenon", "Yacht", "Zebra", "Alpha", "Beta"
+        "Blue", "Tiger", "Storm", "Cloud", "River", "Eagle", "Stone", "Flame",
+        "Swift", "Night", "Brave", "Solar", "Frost", "Cedar", "Maple", "Ocean",
+        "Pixel", "Lunar", "Amber", "Steel", "Crisp", "Vivid", "Blaze", "Delta",
+        "Flint", "Shadow", "Glacier", "Summit", "Zenith", "Orbit", "Pulse", "Canyon",
+        "Prism", "Echo", "Falcon", "Gully", "Harbor", "Jungle", "Kite", "Legend",
+        "Mist", "Nomad", "Onyx", "Panda", "Quartz", "Radar", "Siren", "Tulip",
+        "Under", "Vortex", "Willow", "Xenon", "Yacht", "Zebra", "Alpha", "Beta"
     };
     int wordListSize = 56;
 
@@ -135,7 +131,6 @@ string PhraseGenerator::generate() {
         }
     }
 
-    // Always append 2 random digits at the end for extra strength
     int num = 10 + rand() % 90;
     passphrase += to_string(num);
 
@@ -145,17 +140,13 @@ string PhraseGenerator::generate() {
 
 // ─────────────────────────────────────────────
 //  HELPER — read a valid yes/no answer
-//
-//  FIX: cin >> input leaves '\n' in the buffer.
-//  We now call cin.ignore() after every cin >>
-//  so the buffer is always clean for the next read.
 // ─────────────────────────────────────────────
 bool askYesNo(const string& question) {
     string input;
     while (true) {
         cout << question << " (y/n): ";
         cin >> input;
-        cin.ignore(1000, '\n');   // ← FIX: flush leftover newline
+        cin.ignore(1000, '\n');
 
         if (input == "y" || input == "Y" || input == "yes" || input == "YES") return true;
         if (input == "n" || input == "N" || input == "no"  || input == "NO")  return false;
@@ -166,15 +157,13 @@ bool askYesNo(const string& question) {
 
 // ─────────────────────────────────────────────
 //  HELPER — read an integer within a range
-//
-//  FIX: same cin.ignore() after every cin >>
 // ─────────────────────────────────────────────
 int askInt(const string& question, int minVal, int maxVal) {
     string input;
     while (true) {
         cout << question;
         cin >> input;
-        cin.ignore(1000, '\n');   // ← FIX: flush leftover newline
+        cin.ignore(1000, '\n');
 
         bool valid = !input.empty();
         for (char c : input) {
@@ -193,8 +182,6 @@ int askInt(const string& question, int minVal, int maxVal) {
 
 // ─────────────────────────────────────────────
 //  FREE FUNCTION — runPasswordGenerator
-//  Asks the user questions and returns the
-//  generated password string.
 // ─────────────────────────────────────────────
 string runPasswordGenerator() {
     cout << "\n========================================\n";
@@ -204,15 +191,12 @@ string runPasswordGenerator() {
     cout << "Do you need to remember this password, or will it be saved in the vault?\n";
     cout << "  [1] I need to remember it  (Phrase mode)\n";
     cout << "  [2] I will save it         (Random mode)\n";
-    cout << "Enter choice: ";
 
-    int modeChoice = askInt("", 1, 2);
+    int modeChoice = askInt("Enter choice: ", 1, 2);
 
     string generatedPassword = "";
 
-    // ═══════════════════════════════════
-    //  PHRASE MODE
-    // ═══════════════════════════════════
+    // PHRASE MODE
     if (modeChoice == 1) {
         PhraseGenerator pg;
 
@@ -220,9 +204,9 @@ string runPasswordGenerator() {
         pg.setWordCount(words);
 
         cout << "\nSeparator between words?\n";
-        cout << "  [1] None   — BlueStorm49\n";
-        cout << "  [2] Dash   — Blue-Storm-49\n";
-        cout << "  [3] Symbol — Blue$Storm$49\n";
+        cout << "  [1] None   -- BlueStorm49\n";
+        cout << "  [2] Dash   -- Blue-Storm-49\n";
+        cout << "  [3] Symbol -- Blue$Storm$49\n";
         int sepChoice = askInt("Enter choice: ", 1, 3);
 
         char sep = '\0';
@@ -238,9 +222,7 @@ string runPasswordGenerator() {
         }
     }
 
-    // ═══════════════════════════════════
-    //  RANDOM MODE
-    // ═══════════════════════════════════
+    // RANDOM MODE
     else {
         cout << "\nHow strong does it need to be?\n";
         cout << "  [1] Basic   (good for low-risk accounts)\n";
@@ -263,16 +245,14 @@ string runPasswordGenerator() {
 
         } else if (strength == 2) {
             len = askInt("\nPassword length (12 to 64, recommended 16): ", 12, 64);
-            // uppercase, digits, symbols stay ON — no extra questions needed
 
         } else {
-            // Maximum — everything on automatically
             len = 20;
-            cout << "\nMaximum mode selected. All character types enabled. Length set to 20.\n";
+            cout << "\nMaximum mode: All character types enabled. Length set to 20.\n";
         }
 
         if (!upper && !digits && !symbols) {
-            cout << "\nNote: Only lowercase letters will be used. This makes a weaker password.\n";
+            cout << "\nNote: Only lowercase letters will be used.\n";
         }
 
         RandomGenerator rg(len, upper, digits, symbols, avoid);
@@ -285,17 +265,50 @@ string runPasswordGenerator() {
         }
     }
 
-    // ── Show result ────────────────────────────
     cout << "\n----------------------------------------\n";
     cout << "  Generated Password:  " << generatedPassword << "\n";
     cout << "----------------------------------------\n";
-    cout << "\nTip: You can now evaluate this password using Option 1 from the main menu.\n";
 
-    // FIX: cin buffer must be fully clean before returning to main.
-    // main.cpp does:  cin.ignore(1000, '\n')  for "Press Enter..."
-    // Since askInt/askYesNo already flushed the buffer above,
-    // getline here consumes the actual Enter press from the user
-    // so main's cin.ignore doesn't swallow it and skip the prompt.
+    // SAVE TO VAULT (Random mode only)
+    if (modeChoice == 2) {
+        cout << "\nWould you like to save this password to your vault? (y/n): ";
+        string saveChoice;
+        cin >> saveChoice;
+        cin.ignore(1000, '\n');
+
+        if (saveChoice == "y" || saveChoice == "Y") {
+            string vaultPath;
+            cout << "Enter vault file path (e.g., myvault.txt): ";
+            getline(cin, vaultPath);
+
+            if (vaultPath.empty()) {
+                cout << "Invalid path.\n";
+            } else {
+                string masterPass;
+                cout << "Enter your master password: ";
+                cin >> masterPass;
+                cin.ignore(1000, '\n');
+
+                PasswordVault vault(masterPass, vaultPath);
+                if (vault.open(masterPass)) {
+                    string label;
+                    cout << "\nEnter a label for this password (e.g., Gmail, Bank): ";
+                    getline(cin, label);
+
+                    if (!label.empty()) {
+                        vault.saveEntry(label, generatedPassword);
+                        cout << "\n[OK] Password saved to vault successfully!\n";
+                    } else {
+                        cout << "Invalid label.\n";
+                    }
+                } else {
+                    cout << "\n[ERROR] Failed to open vault. Master password may be incorrect.\n";
+                }
+            }
+        }
+    }
+
+    cout << "\nTip: You can evaluate this password using Option 1 from the main menu.\n";
     cout << "\n  Press Enter to return to menu...";
     cin.ignore(1000, '\n');
 
