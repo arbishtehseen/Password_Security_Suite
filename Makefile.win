@@ -1,15 +1,15 @@
-# Project: PasswordSecuritySuite
+# Project: Password_Security_Suite_Project
 # Makefile created by Embarcadero Dev-C++ 6.3
 
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = main.o PasswordEntry.o AuthGuard.o PasswordVault.o Leakchecker.o HealthDashboard.o
-LINKOBJ  = main.o PasswordEntry.o AuthGuard.o PasswordVault.o Leakchecker.o HealthDashboard.o
+OBJ      = PasswordGenerator.o main.o PasswordEvaluator.o
+LINKOBJ  = PasswordGenerator.o main.o PasswordEvaluator.o
 LIBS     = -L"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib" -L"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include"
 CXXINCS  = -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include/c++"
-BIN      = PasswordSecuritySuite.exe
+BIN      = Password_Security_Suite_Project.exe
 CXXFLAGS = $(CXXINCS) 
 CFLAGS   = $(INCS) 
 DEL      = C:\Program Files (x86)\Embarcadero\Dev-Cpp\DevCpp.exe INTERNAL_DEL
@@ -24,20 +24,11 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
 
+PasswordGenerator.o: PasswordGenerator.cpp
+	$(CPP) -c PasswordGenerator.cpp -o PasswordGenerator.o $(CXXFLAGS)
+
 main.o: main.cpp
 	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
 
-PasswordEntry.o: PasswordEntry.cpp
-	$(CPP) -c PasswordEntry.cpp -o PasswordEntry.o $(CXXFLAGS)
-
-AuthGuard.o: AuthGuard.cpp
-	$(CPP) -c AuthGuard.cpp -o AuthGuard.o $(CXXFLAGS)
-
-PasswordVault.o: PasswordVault.cpp
-	$(CPP) -c PasswordVault.cpp -o PasswordVault.o $(CXXFLAGS)
-
-Leakchecker.o: Leakchecker.cpp
-	$(CPP) -c Leakchecker.cpp -o Leakchecker.o $(CXXFLAGS)
-
-HealthDashboard.o: HealthDashboard.cpp
-	$(CPP) -c HealthDashboard.cpp -o HealthDashboard.o $(CXXFLAGS)
+PasswordEvaluator.o: PasswordEvaluator.cpp
+	$(CPP) -c PasswordEvaluator.cpp -o PasswordEvaluator.o $(CXXFLAGS)
