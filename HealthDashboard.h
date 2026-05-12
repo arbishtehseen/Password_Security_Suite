@@ -3,11 +3,10 @@
 
 #include <vector>
 #include <string>
-
-// Forward declarations (Avoids circular dependency)
-class PasswordEntry;
-class LeakChecker;
-class PasswordEvaluator;
+#include "PasswordEntry.h"
+#include "LeakChecker.h"
+#include "PasswordEvaluator.h"
+#include "PasswordVault.h"
 
 class HealthDashboard {
 private:
@@ -16,16 +15,17 @@ private:
     int weakCount;
 
 public:
-    // Constructor: initialize all counts to 0
+    // Constructor — zero-initialises all counters
     HealthDashboard();
 
-    // Logic for analyzing the vault
-    void analyzeVault(const std::vector<PasswordEntry>& entries, 
-                      LeakChecker& lc, 
+    // Analyzes the vault for leaked or weak passwords
+    void analyzeVault(const PasswordVault& vault,
+                      LeakChecker& lc,
                       PasswordEvaluator& pe);
 
-    // Final result display
+    // Prints a formatted summary of the vault health
     void displaySummary() const;
 };
 
 #endif
+
