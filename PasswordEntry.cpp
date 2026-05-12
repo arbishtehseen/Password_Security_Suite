@@ -81,6 +81,3 @@ void PasswordEntry::display() const{
 	cout<<"DateAdded : " << getDateAdded() <<endl;
 	cout<<"EncryptedPassword : " << getEncryptedPassword() <<endl;
 }
-
-
-
